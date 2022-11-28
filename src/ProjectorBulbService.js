@@ -16,9 +16,9 @@ class ProjectorBulbService {
       .getCharacteristic(Characteristic.ProjectorBulbEcoMode)
       .on('set', this._setEcoMode.bind(this));
 
-    this._powerRegex = /PWR=([0-9]+)/;
-    this._hoursRegex = /LAMP=([0-9]+)/;
-    this._luminanceRegex = /LUMINANCE=([0-9]+)/;
+    this._powerRegex = /\*POW=(ON|OFF)#/;
+    this._hoursRegex = /\*LTM=([0-9]+)#/;
+    this._luminanceRegex = /\*LAMPM=(LNOR|ECO)#/;
   }
 
   getService() {
@@ -29,13 +29,13 @@ class ProjectorBulbService {
     this._updatePowerState(powerStatus);
     await this._refreshLampHours();
 
-    if (powerStatus === '01') {
+    if (powerStatus === 'ON') {
       await this._refreshEcoMode();
     }
   }
 
   _updatePowerState(state) {
-    const isOn = ['01'].indexOf(state) !== -1;
+    const isOn = ['ON'].indexOf(state) !== -1;
 
     this._service
       .getCharacteristic(Characteristic.ProjectorBulb)
@@ -43,7 +43,7 @@ class ProjectorBulbService {
   }
 
   async _refreshEcoMode() {
-    const ecoMode = await this._device.execute('LUMINANCE?');
+    const ecoMode = await this._device.execute('*lampm=?#');
     const matches = this._luminanceRegex.exec(ecoMode);
     if (matches !== null) {
       this._updateEcoMode(matches[1]);
@@ -54,7 +54,7 @@ class ProjectorBulbService {
   }
 
   _updateEcoMode(mode) {
-    const isOn = ['01'].indexOf(mode) !== -1;
+    const isOn = ['ON'].indexOf(mode) !== -1;
 
     this._service
       .getCharacteristic(Characteristic.ProjectorBulbEcoMode)
@@ -62,7 +62,7 @@ class ProjectorBulbService {
   }
 
   async _refreshLampHours() {
-    const lampHours = await this._device.execute('LAMP?');
+    const lampHours = await this._device.execute('*ltim=?#');
     const matches = this._hoursRegex.exec(lampHours);
     if (matches !== null) {
       this._updateLampHours(matches[1]);
@@ -81,9 +81,9 @@ class ProjectorBulbService {
   async _setEcoMode(mode, callback) {
     this.log(`Set projector eco mode to ${mode}`);
     try {
-      let cmd = 'LUMINANCE 00';
+      let cmd = '*lampm=lnor#';
       if (mode) {
-        cmd = 'LUMINANCE 01';
+        cmd = '*lampm=eco#';
       }
 
       await this._device.execute(cmd);

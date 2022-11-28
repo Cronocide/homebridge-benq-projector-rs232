@@ -17,8 +17,8 @@ const HOMEBRIDGE = {
   UUIDGen: null
 };
 
-const platformName = 'homebridge-epson-projector-rs232';
-const platformPrettyName = 'EpsonProjector';
+const platformName = 'homebridge-benq-projector-rs232';
+const platformPrettyName = 'BenqProjector';
 
 module.exports = (homebridge) => {
   HOMEBRIDGE.Accessory = homebridge.platformAccessory;
@@ -27,7 +27,7 @@ module.exports = (homebridge) => {
   HOMEBRIDGE.UUIDGen = homebridge.hap.uuid;
   HOMEBRIDGE.homebridge = homebridge;
 
-  homebridge.registerPlatform(platformName, platformPrettyName, EpsonProjectorPlatform, false);
+  homebridge.registerPlatform(platformName, platformPrettyName, BenqProjectorPlatform, false);
 
 
   ProjectorBulbServiceTypes.registerWith(homebridge.hap);
@@ -37,10 +37,10 @@ module.exports = (homebridge) => {
   ProjectorPowerStatusServiceTypes.registerWith(homebridge.hap);
 };
 
-const EpsonProjectorPlatform = class {
+const BenqProjectorPlatform = class {
   constructor(log, config, api) {
     this.log = log;
-    this.log(`Epson Projector Platform Plugin Loaded - Version ${version}`);
+    this.log(`BenQ Projector Platform Plugin Loaded - Version ${version}`);
     this.config = config;
     this.api = api;
 

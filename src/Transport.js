@@ -114,7 +114,7 @@ class Transport extends EventEmitter {
       if (response === null) {
         throw new Error('Command execution timed out.');
       }
-      if (response.startsWith('ERR\r:')) {
+      if (response.startsWith('Illegal') || response.startsWith('Unsupported') || response.startsWith('Block')) {
         throw new Error('Unsupported command');
       }
 

@@ -16,7 +16,7 @@ class ProjectorPowerService {
       .getCharacteristic(Characteristic.On)
       .on('set', this._setPowerState.bind(this));
 
-    this._regex = /PWR=([0-9]+)/;
+    this._regex = /\*POW=(ON|OFF)/;
   }
 
   getService() {
@@ -24,7 +24,7 @@ class ProjectorPowerService {
   }
 
   async update(powerStatus) {
-    const isOn = ['01', '02'].indexOf(powerStatus) !== -1;
+    const isOn = ['ON', 'OFF'].indexOf(powerStatus) !== -1;
     // const isWarmup = powerStatus === '02';
     // const isCooldown = powerStatus === '03';
     // const isAbnormalStandby = powerStatus === '05';
@@ -37,9 +37,9 @@ class ProjectorPowerService {
   async _setPowerState(value, callback) {
     this.log(`Set projector power state to ${value}`);
     try {
-      let cmd = 'PWR OFF';
+      let cmd = '*pow=off#';
       if (value) {
-        cmd = 'PWR ON';
+        cmd = '*pow=on#';
       }
 
       await this._device.execute(cmd);

@@ -1,7 +1,7 @@
 {
-  "name": "homebridge-epson-projector-rs232",
+  "name": "homebridge-benq-projector-rs232",
   "version": "0.1.2",
-  "description": "Homebridge integration for Epson EH-TW7200 projector",
+  "description": "Homebridge integration for BenQ projectors",
   "main": "src/index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint src",
@@ -11,7 +11,7 @@
     "homebridge",
     "homebridge-plugin",
     "plugin",
-    "epson",
+    "benq",
     "projector",
     "serial"
   ],
@@ -33,6 +33,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/grover/homebridge-epson-projector-rs232.git"
+    "url": "git+https://github.com/cronocide/homebridge-benq-projector-rs232.git"
   }
 }

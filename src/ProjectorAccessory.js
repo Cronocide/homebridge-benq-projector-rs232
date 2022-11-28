@@ -56,7 +56,7 @@ class ProjectorAccessory {
     this._accessoryInformation = new Service.AccessoryInformation();
     this._accessoryInformation
       .setCharacteristic(Characteristic.Name, this.name)
-      .setCharacteristic(Characteristic.Manufacturer, 'Epson')
+      .setCharacteristic(Characteristic.Manufacturer, 'BenQ')
       .setCharacteristic(Characteristic.Model, 'Projector')
       .setCharacteristic(Characteristic.SerialNumber, '')
       .setCharacteristic(Characteristic.FirmwareRevision, this.config.version)
@@ -140,14 +140,14 @@ class ProjectorAccessory {
   }
 
   async _refreshSerialNumber() {
-    const serialNumber = await this._device.execute('SNO?');
+    const serialNumber = await this._device.execute('V99N0000');
     this.log(`Projector serial number: ${serialNumber.constructor.name}`);
 
     this._accessoryInformation.setCharacteristic(Characteristic.SerialNumber, serialNumber);
   }
 
   async _refreshPowerStatus() {
-    const powerState = await this._device.execute('PWR?');
+    const powerState = await this._device.execute('*pow=?#');
     const matches = powerRegex.exec(powerState);
     if (matches === null) {
       throw new Error('Failed to process PWR? response');

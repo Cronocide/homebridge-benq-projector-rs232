@@ -8,20 +8,20 @@ class ProjectorColorModeService {
     this.log = log;
 
     this._device = device;
-    this._cmodeRegex = /CMODE=([0-9A-Fa-f]+)/;
+    this._cmodeRegex = /\*appmod=([a-z0-9]+)#/;
 
     Characteristic = api.hap.Characteristic;
 
     this._characteristics = [
-      { mode: 0x06, characteristic: Characteristic.ColorModeDynamic },
-      { mode: 0x07, characteristic: Characteristic.ColorModeNatural },
-      { mode: 0x0C, characteristic: Characteristic.ColorModeLiving },
-      { mode: 0x13, characteristic: Characteristic.ColorModeTHX },
-      { mode: 0x15, characteristic: Characteristic.ColorModeCinema },
-      { mode: 0x17, characteristic: Characteristic.ColorMode3DCinema },
-      { mode: 0x18, characteristic: Characteristic.ColorMode3DDynamic },
-      { mode: 0x19, characteristic: Characteristic.ColorMode3DTHX },
-      { mode: 0x20, characteristic: Characteristic.ColorModeBlackWhiteCinema },
+      { mode: 'dynamic', characteristic: Characteristic.ColorModeDynamic },
+      { mode: 'std', characteristic: Characteristic.ColorModeNatural },
+      { mode: 'game', characteristic: Characteristic.ColorModeLiving },
+      { mode: 'bright', characteristic: Characteristic.ColorModeTHX },
+      { mode: 'cine', characteristic: Characteristic.ColorModeCinema },
+      { mode: 'threed', characteristic: Characteristic.ColorMode3DCinema },
+      { mode: 'preset', characteristic: Characteristic.ColorMode3DDynamic },
+      { mode: 'user1', characteristic: Characteristic.ColorMode3DTHX },
+      { mode: 'user2', characteristic: Characteristic.ColorModeBlackWhiteCinema },
     ];
 
     this._service = new api.hap.Service.ProjectorColorModeService(name);
@@ -38,7 +38,7 @@ class ProjectorColorModeService {
   }
 
   async update() {
-    const status = await this._device.execute('CMODE?');
+    const status = await this._device.execute('*appmod=?#');
     const matches = this._cmodeRegex.exec(status);
     if (matches !== null) {
       let value = Number.parseInt(matches[1], 16);
@@ -51,7 +51,7 @@ class ProjectorColorModeService {
       }
     }
     else {
-      this.log(`Failed to refresh characteristic state: CMODE - ${status}`);
+      this.log(`Failed to refresh characteristic state: *appmod=?# - ${status}`);
     }
   }
 
@@ -66,10 +66,9 @@ class ProjectorColorModeService {
 
 
   async _setColorMode(c, value, callback) {
-    this.log(`Set projector CMODE to ${c.mode}`);
+    this.log(`Set projector APPMODE to ${c.mode}`);
     try {
-      value = ('00' + c.mode.toString(16)).substr(-2);
-      const cmd = `CMODE ${value}`;
+      const cmd = `*appmod=${c.mode}#`;
 
       this.log(`Sending ${cmd}`);
       await this._device.execute(cmd);
